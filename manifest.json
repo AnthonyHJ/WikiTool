@@ -1,0 +1,31 @@
+{
+  "name": "My Wiki Tool",
+  "short_name": "WikiTool",
+  "version": "0.0.1",
+  "version_name": "0.0.1 - Initial Test",
+  "description": "A tool for saving a wiki to Local Storage",
+  
+  "icons": {
+    "128": "images/Wiki_128.png"
+  },
+  
+  "browser_action": {
+    "default_title": "My Wiki Tool",
+//	"default_popup": "popup.html",
+    "default_icon": {
+      "128": "images/Wiki_128.png"
+    }
+  },
+  
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+//  "options_page": "options.html",
+  "permissions": [
+            "storage",
+            "unlimitedStorage"
+            ],
+    
+  "manifest_version": 2
+}

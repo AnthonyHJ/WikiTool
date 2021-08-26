@@ -1,0 +1,38 @@
+
+<!doctype html>
+<html lang="en-GB">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link type="text/css" rel="stylesheet" href="wiki.css">
+		<title>Wiki</title>
+	</head>
+	<body>
+		<template id="wiki-page">
+		</template>
+		
+		<div id="wiki-container" class="flex-container">
+			<div id="wiki-page-view" class="main-pane content-pane">
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum lorem quis ante volutpat pretium. Pellentesque sed vestibulum nulla. Suspendisse aliquam libero diam, eget malesuada sem aliquet a. Nulla facilisi. Morbi at magna lacus. Curabitur vulputate mi vel sem pretium, eu euismod augue lacinia. Quisque congue quam placerat justo posuere, ac consectetur neque placerat. Aenean ac neque eget odio malesuada condimentum quis ac massa. Nullam ac mauris ipsum.</p>
+
+				<p>Proin dui nunc, finibus et velit ut, accumsan lacinia ipsum. Sed sem ex, tempor dictum ante vel, commodo ullamcorper lectus. Integer scelerisque id ligula eleifend efficitur. Etiam maximus tortor id dui maximus tincidunt. Vestibulum a blandit ipsum, eget molestie tortor. Nulla fringilla justo at eros cursus sagittis. Quisque elit tortor, aliquam vel lectus tincidunt, molestie placerat massa. Praesent non nulla tortor. Pellentesque blandit sem eu diam venenatis varius. Fusce sit amet bibendum purus, in vestibulum massa. Phasellus eu laoreet ex. Aliquam erat volutpat. Mauris vitae posuere erat, ac faucibus nisl.</p>
+
+				<p>Fusce non malesuada arcu. Maecenas porttitor magna cursus justo fermentum porta. Mauris feugiat venenatis quam, eget posuere odio blandit rutrum. Fusce vel finibus mi, eu sollicitudin nulla. Nam fermentum sem id nulla aliquam, nec sollicitudin ex posuere. Curabitur lacinia vestibulum urna eget euismod. Etiam a facilisis nunc.</p>
+			</div>
+			<div id="wiki-page-edit" class="main-pane content-pane">
+				<h1 id='pageEditName'></h1>
+				<textarea id='raw-markdown'></textarea>
+			</div>
+			<div id="wiki-page-opts" class="side-pane content-pane">
+				<ul>
+					<li><a href='' id='home-link'><span class="material-icons md-18">home</span> Home</a></li>
+					<li><a href='' id='edit-link'><span class="material-icons md-18">create</span> Edit Page</a></li>
+					<li><a href='#StartupPage'><span class="material-icons md-18">create</span> StartupPage</a></li>
+					<li><a href='#Alsert'><span class="material-icons md-18">create</span> Alsert</a></li>
+				</ul>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="wiki.js"></script>
+	</body>
+</html>

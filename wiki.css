@@ -1,0 +1,42 @@
+
+body		{ background-color: #ddd; font-size: 100%; }
+
+.main-pane	{ flex-grow: 1; min-height: 200px; }
+.side-pane	{ width: 200px; min-height: 100px; flex-shrink: 0; }
+
+.content-pane	{ background-color: #fff; border-radius: 3px; box-shadow: 0 0 5px black; padding: 5px 20px; }
+
+#wiki-container	{ justify-content: flex-start; align-items: flex-start; column-gap: 20px; padding: 20px 40px; width: 100%; box-sizing: border-box;
+}
+.flex-container { display: flex; }
+
+div.side-pane > ul	{ list-style-type: none; padding: 0; }
+
+.material-icons.md-18 { font-size: 18px; vertical-align: bottom; }
+
+li	{ margin-block-start: 0.5em; margin-block-end: 0.5em; }
+a	{ text-decoration: none; }
+
+textarea#raw-markdown {
+    margin: 0px;
+    height: 200px;
+    width: 100%;
+	margin-block-start: 0.5em; 
+	margin-block-end: 0.5em; 
+}
+
+table {
+  border-collapse: collapse;
+  margin-block-start: 0.5em; 
+  margin-block-end: 0.5em; 
+}
+
+td, th {
+  border: 1px solid #999;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+th {
+  background-color: #DDD;
+}
