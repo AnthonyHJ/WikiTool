@@ -28,6 +28,7 @@ var pageVars = {
 	}
 };
 var tagList = {};
+var currentPage;
 
 var template = document.querySelector('#wiki-page');
 
@@ -59,6 +60,46 @@ function Initialise()
 function LoadPage(pageName)
 {
 	pageName = decodeURIComponent(pageName);
+	
+	if (pageName == 'edit')
+	{
+		pageName = currentPage;
+		
+		//	Open the 'edit' pane
+		pageContent.style.display = 'none';
+		pageEditPage.style.display = 'block';
+		
+		//	Correct the URI
+//		location.hash = pageName;
+		
+		return;
+	}
+	
+	if (pageName == 'preview')
+	{
+		pageName = currentPage;
+		
+		//	re-parse the wiki page
+		pageContent.innerHTML = "<h1>Previewing: " + pageName + "</h1>";
+		pageContent.appendChild(WikiParse(pageEditor.value));
+		
+		//	Open the 'view' pane
+		pageContent.style.display = 'block';
+		pageEditPage.style.display = 'none';
+		
+		//	Correct the URI
+//		location.hash = pageName;
+		
+		return;
+	}
+		
+	if (pageName == 'save')
+	{
+		pageName = currentPage;
+		
+		//	save the page
+		//	open as view
+	}
 	
 	if (location.hash.substr(1) != pageName)
 		location.hash = pageName;
@@ -94,7 +135,7 @@ function LoadPage(pageName)
 	
 	//	set the content of 'wiki-page-edit' textarea to pageMkDn
 	pageEditName.innerHTML = "Editing " + pageName;
-	pageEditor.innerHTML = pageMkDn;
+	pageEditor.value = pageMkDn;
 	console.log(pageMkDn);
 	
 	//	TODO: Update the edit link
@@ -235,6 +276,8 @@ function FindOrPopulatePage(pageName)
 {
 	if (!pageVars[pageName])
 		pageVars[pageName] = defaultPageVars;
+	
+	currentPage = pageName;
 	
 	return pageVars[pageName];
 }

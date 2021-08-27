@@ -8,6 +8,8 @@ body		{ background-color: #ddd; font-size: 100%; }
 
 #wiki-container	{ justify-content: flex-start; align-items: flex-start; column-gap: 20px; padding: 20px 40px; width: 100%; box-sizing: border-box;
 }
+#footer	{ text-align: center; }
+
 .flex-container { display: flex; }
 
 div.side-pane > ul	{ list-style-type: none; padding: 0; }
@@ -27,8 +29,8 @@ textarea#raw-markdown {
 
 table {
   border-collapse: collapse;
-  margin-block-start: 0.5em; 
-  margin-block-end: 0.5em; 
+  margin-block-start: 1em; 
+  margin-block-end: 1em; 
 }
 
 td, th {

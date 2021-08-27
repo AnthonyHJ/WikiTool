@@ -11,6 +11,8 @@
 		<template id="wiki-page">
 		</template>
 		
+		<div id='header'></div>
+		
 		<div id="wiki-container" class="flex-container">
 			<div id="wiki-page-view" class="main-pane content-pane">
 				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum lorem quis ante volutpat pretium. Pellentesque sed vestibulum nulla. Suspendisse aliquam libero diam, eget malesuada sem aliquet a. Nulla facilisi. Morbi at magna lacus. Curabitur vulputate mi vel sem pretium, eu euismod augue lacinia. Quisque congue quam placerat justo posuere, ac consectetur neque placerat. Aenean ac neque eget odio malesuada condimentum quis ac massa. Nullam ac mauris ipsum.</p>
@@ -21,15 +23,32 @@
 			</div>
 			<div id="wiki-page-edit" class="main-pane content-pane">
 				<h1 id='pageEditName'></h1>
+				<div id="editButtons">
+					<span class="material-icons">format_bold</span>
+					<span class="material-icons">format_italic</span>
+					<span class="material-icons">format_underlined</span>
+					<span class="material-icons">format_strikethrough</span>
+					<span class="material-icons">format_list_bulleted</span>
+					<span class="material-icons">format_list_numbered</span>
+				</div>
 				<textarea id='raw-markdown'></textarea>
+				<div id="savePreview">
+					<span class="material-icons">save</span>
+					<span class="material-icons">article</span>
+					<a href='#preview'><span class="material-icons">preview</span></a>
+				</div>
 			</div>
 			<div id="wiki-page-opts" class="side-pane content-pane">
 				<ul>
 					<li><a href='' id='home-link'><span class="material-icons md-18">home</span> Home</a></li>
 					<li><a href='' id='edit-link'><span class="material-icons md-18">create</span> Edit Page</a></li>
-					<li><a href='#StartupPage'><span class="material-icons md-18">create</span> StartupPage</a></li>
-					<li><a href='#Alsert'><span class="material-icons md-18">create</span> Alsert</a></li>
 				</ul>
+			</div>
+		</div>
+		
+		<div id='footer'>
+			<div>
+				<span class="material-icons md-18">attribution</span> Material Design Icons from [<a href='https://fonts.google.com/icons'>Google Fonts</a>]
 			</div>
 		</div>
 		
