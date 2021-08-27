@@ -11,7 +11,7 @@
 		<template id="wiki-page">
 		</template>
 		
-		<div id='header'></div>
+		<header></header>
 		
 		<div id="wiki-container" class="flex-container">
 			<div id="wiki-page-view" class="main-pane content-pane">
@@ -33,9 +33,9 @@
 				</div>
 				<textarea id='raw-markdown'></textarea>
 				<div id="savePreview">
-					<span class="material-icons">save</span>
+					<a href='#save' class="material-icons">save</a>
 					<span class="material-icons">article</span>
-					<a href='#preview'><span class="material-icons">preview</span></a>
+					<a href='#preview' class="material-icons">preview</a>
 				</div>
 			</div>
 			<div id="wiki-page-opts" class="side-pane content-pane">
@@ -47,11 +47,11 @@
 			</div>
 		</div>
 		
-		<div id='footer'>
+		<footer>
 			<div>
 				<span class="material-icons md-18">attribution</span> Material Design Icons from [<a href='https://fonts.google.com/icons'>Google Fonts</a>]
 			</div>
-		</div>
+		</footer>
 		
 		<script type="text/javascript" src="wiki.js"></script>
 	</body>

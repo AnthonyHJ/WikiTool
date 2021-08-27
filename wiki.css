@@ -6,9 +6,10 @@ body		{ background-color: #ddd; font-size: 100%; }
 
 .content-pane	{ background-color: #fff; border-radius: 3px; box-shadow: 0 0 5px black; padding: 5px 20px; }
 
-#wiki-container	{ justify-content: flex-start; align-items: flex-start; column-gap: 20px; padding: 20px 40px; width: 100%; box-sizing: border-box;
-}
-#footer	{ text-align: center; }
+#wiki-container	{ justify-content: flex-start; align-items: flex-start; column-gap: 20px; padding: 20px 40px; width: 100%; box-sizing: border-box; }
+
+header	{ padding: 20px 40px; width: 100%; box-sizing: border-box; }
+footer	{ text-align: center; }
 
 .flex-container { display: flex; }
 
