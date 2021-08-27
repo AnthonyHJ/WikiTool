@@ -44,9 +44,13 @@ table {
 td, th {
   border: 1px solid #999;
   padding: 0.5rem;
-  text-align: left;
 }
 
 th {
   background-color: #DDD;
 }
+
+td.left-cell	{ align: left; }
+td.center-cell	{ align: center; }
+td.right-cell	{ align: right; }
+td.justify-cell	{ align: justify; }

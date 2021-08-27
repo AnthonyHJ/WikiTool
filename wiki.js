@@ -242,6 +242,16 @@ function WikiParse(rawMarkDown)
 			let tempTag = document.createElement('tr');
 			
 			myLine.substr(1, myLine.length-2).split('|').forEach(myCell => {
+				
+				let cellAlign = 'justify';
+				
+				if ((myCell.startsWith(" "))&&(myCell.endsWith(" ")))
+					cellAlign = 'center';
+				else if (myCell.endsWith("  "))
+					cellAlign = 'left';
+				else if (myCell.startsWith("  "))
+					cellAlign = 'right';
+				
 				myCell = myCell.trim();
 				
 				let tempCell = document.createElement('td');
@@ -255,18 +265,16 @@ function WikiParse(rawMarkDown)
 				if (myCell == "<")
 				{
 					let colSpan = tempTag.lastElementChild.getAttribute('colspan');
-					console.log(colSpan);
 					
 					if (!colSpan)
 						colSpan = 1;
 					
 					tempTag.lastElementChild.setAttribute('colspan', parseInt(colSpan) + 1);
-					
-					console.log(tempTag.lastElementChild.getAttribute('colspan'));
 				}
 				else
 				{
 					tempCell.innerHTML = myCell;
+					tempCell.align = cellAlign;
 					
 					tempTag.appendChild(tempCell);
 				}
