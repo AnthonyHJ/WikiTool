@@ -142,6 +142,39 @@ function LoadPage(pageName)
 	editLink.href = '#edit/' + pageName;
 }
 
+function linkMakerOne(match, p1, offset, string) {
+	var myClass = 'new';
+
+	if (pageVars[p1])
+		myClass = 'exist';
+		
+  return '<a href=\'#' + p1 + '\' class=\'' + myClass + '\'>' + p1 + '</a>';
+}
+
+function linkMakerTwo(match, p1, p2, offset, string) {
+	var myClass = 'new';
+
+	if (pageVars[p2])
+		myClass = 'exist';
+		
+  return '<a href=\'#' + p2 + '\' class=\'' + myClass + '\'>' + p1 + '</a>';
+}
+
+function transcluder(match, p1, offset, string) {
+	var myClass = 'new';
+
+	if (pageVars[p1])
+	{
+		let fragment = WikiParse(pageVars[p1].content);
+		let container = document.createElement('div');
+		
+		container.appendChild(fragment);
+		return container.innerHTML;
+	}
+		
+  return '&lt;Missing content: [[' + p1 + ']]&gt;';
+}
+
 function WikiParse(rawMarkDown)
 {
 	let lines = rawMarkDown.split('\n');
@@ -151,6 +184,9 @@ function WikiParse(rawMarkDown)
 	let currentTag = document.createDocumentFragment();
 	
 	lines.forEach(myLine => {
+		
+		//	wiki transclusion
+		myLine = myLine.replaceAll(/\{\{([\w ]+?)\}\}/g, transcluder);
 		
 		//	bold
 		myLine = myLine.replaceAll(/\'\'(.+?)\'\'/g, '<strong>$1</strong>');
@@ -165,10 +201,10 @@ function WikiParse(rawMarkDown)
 		myLine = myLine.replaceAll(/__(.+?)__/g, '<u>$1</u>');
 		
 		//	wiki link 2 (target and text do match)
-		myLine = myLine.replaceAll(/\[\[([\w ]+?)\]\]/g, '<a href=\'#$1\'>$1</a>');
+		myLine = myLine.replaceAll(/\[\[([\w ]+?)\]\]/g, linkMakerOne);
 		
 		//	wiki link 1 (target and text do NOT match)
-		myLine = myLine.replaceAll(/\[\[([\w ]+?)\|([\w ]+?)\]\]/g, '<a href=\'#$2\'>$1</a>');
+		myLine = myLine.replaceAll(/\[\[([\w ]+?)\|([\w ]+?)\]\]/g, linkMakerTwo);
 		
 		//	external link?
 		
