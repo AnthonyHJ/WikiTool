@@ -16,7 +16,10 @@ var defaultConfig = {
 };
 var defaultPageVars = {
 		'content' : '',
-		'tags' : []
+		'created' : '',
+		'modified' : '',
+		'tags' : [],
+		'title' : ''
 		};
 
 //	Set at runtime
@@ -24,8 +27,10 @@ var config = {};
 var pageVars = {
 	'StartupPage' : {
 		'content' : 'Test\n\nContent',
-		'tags' : ['default', 'startup', 'system']
-	}
+		'created' : 1,
+		'modified' : 1,
+		'tags' : ['default', 'startup', 'system'],
+		'title' : ''}
 };
 var tagList = {};
 var currentPage;
