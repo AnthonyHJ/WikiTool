@@ -48,15 +48,17 @@ function Initialise()
 		else
 			config = result.config;
 		
-//		console.log(result);
-//		console.log(config);
-//		console.log(config['startupPage']);
-		
-		//	Load startup page
-		if (location.hash)
-			LoadPage(location.hash.substr(1));
-		else
-			LoadPage(config['startupPage']);
+		//	Load pages
+		chrome.storage.local.get(['pageValues'], function(pageResult) {
+			if (pageResult.pageValues)
+				pageVars = pageResult.pageValues;
+			
+			//	Load startup page
+			if (location.hash)
+				LoadPage(location.hash.substr(1));
+			else
+				LoadPage(config['startupPage']);
+		});
 		
 		homeLink.href = '#' + config['startupPage'];
 		});
@@ -85,7 +87,8 @@ function LoadPage(pageName)
 		pageName = currentPage;
 		
 		//	re-parse the wiki page
-		pageContent.innerHTML = "<h1>Previewing: " + pageName + "</h1>";
+		pageContent.innerHTML = "<h1>Previewing: " + pageName + " <a href='#save' class='material-icons' title='save'>save</a></h1>";
+		""
 		pageContent.appendChild(WikiParse(pageEditor.value));
 		
 		//	Open the 'view' pane
@@ -102,8 +105,28 @@ function LoadPage(pageName)
 	{
 		pageName = currentPage;
 		
+		if (!pageVars[pageName])
+			pageVars[pageName] = Object.create(defaultPageVars);
+		
+		if (!pageVars[pageName]['created'])
+			pageVars[pageName]['created'] = Date.now()
+		
+		if (!pageVars[pageName]['title'])
+			pageVars[pageName]['title'] = pageName;
+		
 		//	save the page
-		//	open as view
+		pageVars[pageName].content = pageEditor.value;
+		pageVars[pageName]['modified'] = Date.now();
+		
+		//	add to the localStorage
+		chrome.storage.local.set({'pageValues': pageVars}, function() {
+			console.log('pageValues is set to wiki page values');
+		});
+		
+		//	Open the 'view' pane
+		location.hash = pageName;
+		
+		return;
 	}
 	
 	if (location.hash.substr(1) != pageName)
@@ -323,10 +346,10 @@ function WikiParse(rawMarkDown)
 
 function FindOrPopulatePage(pageName)
 {
-	if (!pageVars[pageName])
-		pageVars[pageName] = defaultPageVars;
-	
 	currentPage = pageName;
+	
+	if (!pageVars[pageName])
+		return Object.create(defaultPageVars);
 	
 	return pageVars[pageName];
 }
