@@ -176,7 +176,7 @@ function linkMakerOne(match, p1, offset, string) {
 	if (pageVars[p1])
 		myClass = 'exist';
 		
-  return '<a href=\'#' + p1 + '\' class=\'' + myClass + '\'>' + p1 + '</a>';
+  return '<a href=\"#' + p1 + '\" class=\"' + myClass + '\">' + p1 + '</a>';
 }
 
 function linkMakerTwo(match, p1, p2, offset, string) {
@@ -185,7 +185,7 @@ function linkMakerTwo(match, p1, p2, offset, string) {
 	if (pageVars[p2])
 		myClass = 'exist';
 		
-  return '<a href=\'#' + p2 + '\' class=\'' + myClass + '\'>' + p1 + '</a>';
+  return '<a href=\"#' + p2 + '\" class=\"' + myClass + '\">' + p1 + '</a>';
 }
 
 function transcluder(match, p1, offset, string) {
@@ -205,6 +205,18 @@ function transcluder(match, p1, offset, string) {
 
 function WikiParse(rawMarkDown)
 {
+	//	bold
+	rawMarkDown = rawMarkDown.replaceAll(/\'\'(.+?)\'\'/gs, '<strong>$1</strong>');
+	
+	//	italic
+	rawMarkDown = rawMarkDown.replaceAll(/\/\/(.+?)\/\//gs, '<em>$1</em>');
+	
+	//	strike
+	rawMarkDown = rawMarkDown.replaceAll(/~~(.+?)~~/gs, '<strike>$1</strike>');
+	
+	//	underline
+	rawMarkDown = rawMarkDown.replaceAll(/__(.+?)__/gs, '<u>$1</u>');
+	
 	let lines = rawMarkDown.split('\n');
 	
 	let htmlOutput = document.createDocumentFragment();
@@ -214,25 +226,13 @@ function WikiParse(rawMarkDown)
 	lines.forEach(myLine => {
 		
 		//	wiki transclusion
-		myLine = myLine.replaceAll(/\{\{([\w ]+?)\}\}/g, transcluder);
-		
-		//	bold
-		myLine = myLine.replaceAll(/\'\'(.+?)\'\'/g, '<strong>$1</strong>');
-		
-		//	italic
-		myLine = myLine.replaceAll(/\/\/(.+?)\/\//g, '<em>$1</em>');
-		
-		//	strike
-		myLine = myLine.replaceAll(/~~(.+?)~~/g, '<strike>$1</strike>');
-		
-		//	underline
-		myLine = myLine.replaceAll(/__(.+?)__/g, '<u>$1</u>');
+		myLine = myLine.replaceAll(/\{\{([^\}]+?)\}\}/g, transcluder);
 		
 		//	wiki link 2 (target and text do match)
-		myLine = myLine.replaceAll(/\[\[([\w ]+?)\]\]/g, linkMakerOne);
+		myLine = myLine.replaceAll(/\[\[([^\]|]+?)\]\]/g, linkMakerOne);
 		
 		//	wiki link 1 (target and text do NOT match)
-		myLine = myLine.replaceAll(/\[\[([\w ]+?)\|([\w ]+?)\]\]/g, linkMakerTwo);
+		myLine = myLine.replaceAll(/\[\[([^\]|]+?)\|([\w \']+?)\]\]/g, linkMakerTwo);
 		
 		//	external link?
 		
