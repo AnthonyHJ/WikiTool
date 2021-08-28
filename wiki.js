@@ -322,6 +322,18 @@ function WikiParse(rawMarkDown)
 			tempTag.innerHTML = myLine.substr(1);
 			currentTag.appendChild(tempTag);
 		}
+		else if (myLine[0] == "#")
+		{
+			if (currentTag.tagName != "OL")
+			{
+				htmlOutput.appendChild(currentTag);
+				currentTag = document.createElement('ol');
+			}
+			
+			let tempTag = document.createElement('li');
+			tempTag.innerHTML = myLine.substr(1);
+			currentTag.appendChild(tempTag);
+		}
 		else if (myLine == "")
 		{
 			htmlOutput.appendChild(currentTag);
