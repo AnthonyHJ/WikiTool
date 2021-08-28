@@ -36,6 +36,7 @@ var pageVars = {
 		'title' : ''}
 };
 var tagList = {};
+
 var currentPage;
 var currentTags = [];
 
@@ -56,13 +57,19 @@ function Initialise()
 		chrome.storage.local.get(['pageValues'], function(pageResult) {
 			if (pageResult.pageValues)
 				pageVars = pageResult.pageValues;
-			
-			//	Load startup page
-			if (location.hash)
-				LoadPage(location.hash.substr(1));
-			else
-				LoadPage(config['startupPage']);
-		});
+				
+			//	Load tags
+			chrome.storage.local.get(['tagList'], function(tagResult) {
+				if (tagResult.tagList)
+					tagList = tagResult.tagList;
+				
+				//	Load startup page
+				if (location.hash)
+					LoadPage(location.hash.substr(1));
+				else
+					LoadPage(config['startupPage']);
+				});
+			});
 		
 		homeLink.href = '#' + config['startupPage'];
 		});
@@ -162,6 +169,28 @@ function LoadPage(pageName)
 		pageName = currentPage;
 		
 		currentTags = tagsEditor.value.split(',');
+		console.log(currentTags);
+		
+		//	process those tags
+		let cleanedTags = [];
+		
+		for (let thisTag in currentTags)
+		{
+			console.log(thisTag);
+			thisTag = currentTags[thisTag].trim();
+			console.log(thisTag);
+			
+			cleanedTags.push(thisTag);
+			
+			if (!tagList[thisTag])
+				tagList[thisTag] = [];
+			
+			if (!tagList[thisTag].includes(currentPage))
+				tagList[thisTag].push(currentPage);
+		}
+		
+		currentTags = cleanedTags;
+		console.log(currentTags);
 		
 		if (!pageVars[pageName])
 			pageVars[pageName] = Object.create(defaultPageVars);
@@ -174,7 +203,7 @@ function LoadPage(pageName)
 		
 		//	save the page
 		pageVars[pageName].content = pageEditor.value;
-//		pageVars[pageName].tags = tagsEditor.value
+		pageVars[pageName].tags = currentTags;
 		console.log(currentTags);
 		pageVars[pageName]['modified'] = Date.now();
 		
@@ -182,6 +211,10 @@ function LoadPage(pageName)
 		chrome.storage.local.set({'pageValues': pageVars}, function() {
 			console.log('pageValues is set to wiki page values');
 		});
+		chrome.storage.local.set({'tagList': tagList}, function() {
+			console.log('tagList is set to wiki tag values');
+		});
+		console.log(tagList);
 		
 		//	Open the 'view' pane
 		location.hash = pageName;
@@ -203,11 +236,11 @@ function LoadPage(pageName)
 		
 		let tagUL = document.createElement('ul');
 		
-		for (const thisPage of Object.keys(pageVars))
+		if(!tagList[tagName])
+			tagList[tagName] = [];
+		
+		for (const thisPage of tagList[tagName])
 		{
-			//	TODO: this should read from an existing taglist array
-			if (pageVars[thisPage].tags.includes(tagName))
-			{
 				//	Add it to the list
 				let tagEntry = document.createElement('li');
 //				tagEntry.classList.add('tag-list-entry');
@@ -219,7 +252,6 @@ function LoadPage(pageName)
 				tagEntry.appendChild(tagLink);
 				
 				tagUL.appendChild(tagEntry);
-			}
 		}
 		
 		pageContent.appendChild(tagUL);
@@ -232,8 +264,6 @@ function LoadPage(pageName)
 	
 	if ((!pageVars[pageName])&&(pageName.substr(0,5) != 'edit/'))
 		pageName = 'edit/' + pageName;
-	
-	console.log(pageName);
 	
 	if (pageName.substr(0,5) == 'edit/')
 	{
@@ -256,23 +286,18 @@ function LoadPage(pageName)
 	
 	let pageMkDn = FindOrPopulatePage(pageName).content;
 	currentTags = FindOrPopulatePage(pageName).tags;
-	console.log(pageName);
-	console.log(FindOrPopulatePage(pageName));
-	console.log(currentTags);
 	
 	//	set the content of 'wiki-page-view' to pageHTML
 	pageContent.innerHTML = "<h1>" + pageName + "</h1>";
 	pageContent.appendChild(TagsParse(currentTags));
 	pageContent.appendChild(WikiParse(pageMkDn));
-//	console.log(pageHTML);
 	
 	//	set the content of 'wiki-page-edit' textarea to pageMkDn
 	pageEditName.innerHTML = "Editing " + pageName;
 	pageEditor.value = pageMkDn;
 	tagsEditor.value = currentTags.join(",");
-	console.log(pageMkDn);
 	
-	//	TODO: Update the edit link
+	//	Update the edit link
 	editLink.href = '#edit/' + pageName;
 }
 
