@@ -334,6 +334,11 @@ function WikiParse(rawMarkDown)
 			tempTag.innerHTML = myLine.substr(1);
 			currentTag.appendChild(tempTag);
 		}
+		else if (myLine == "---")
+		{
+			htmlOutput.appendChild(currentTag);
+			currentTag = document.createElement('hr');
+		}
 		else if (myLine == "")
 		{
 			htmlOutput.appendChild(currentTag);
