@@ -5,6 +5,7 @@ var pageContent = document.querySelector("#wiki-page-view");
 var pageEditPage = document.querySelector("#wiki-page-edit");
 var pageEditName = pageEditPage.querySelector("h1");
 var pageEditor = pageEditPage.querySelector("textarea");
+var tagsEditor = pageEditPage.querySelector("#tags-list");
 
 var wikiOptions = document.querySelector("#wiki-page-opts");
 var homeLink = document.querySelector("#home-link");
@@ -36,6 +37,7 @@ var pageVars = {
 };
 var tagList = {};
 var currentPage;
+var currentTags = [];
 
 var template = document.querySelector('#wiki-page');
 
@@ -142,7 +144,7 @@ function LoadPage(pageName)
 		
 		//	re-parse the wiki page
 		pageContent.innerHTML = "<h1>Previewing: " + pageName + " <a href='#save' class='material-icons' title='save'>save</a></h1>";
-		""
+		pageContent.appendChild(TagsParse(currentTags));
 		pageContent.appendChild(WikiParse(pageEditor.value));
 		
 		//	Open the 'view' pane
@@ -159,6 +161,8 @@ function LoadPage(pageName)
 	{
 		pageName = currentPage;
 		
+		currentTags = tagsEditor.value.split(',');
+		
 		if (!pageVars[pageName])
 			pageVars[pageName] = Object.create(defaultPageVars);
 		
@@ -170,6 +174,8 @@ function LoadPage(pageName)
 		
 		//	save the page
 		pageVars[pageName].content = pageEditor.value;
+//		pageVars[pageName].tags = tagsEditor.value
+		console.log(currentTags);
 		pageVars[pageName]['modified'] = Date.now();
 		
 		//	add to the localStorage
@@ -183,11 +189,51 @@ function LoadPage(pageName)
 		return;
 	}
 	
+	if (pageName.substr(0,4) == 'tag:')
+	{
+		let tagName = pageName.substr(4);
+		
+		console.log('Loading tag: ' + tagName);
+	
+		//	Open the 'edit' pane
+		pageContent.style.display = 'block';
+		pageEditPage.style.display = 'none';
+		
+		pageContent.innerHTML = "<h1>Pages tagged with: " + tagName + "</h1>";
+		
+		let tagUL = document.createElement('ul');
+		
+		for (const thisPage of Object.keys(pageVars))
+		{
+			//	TODO: this should read from an existing taglist array
+			if (pageVars[thisPage].tags.includes(tagName))
+			{
+				//	Add it to the list
+				let tagEntry = document.createElement('li');
+//				tagEntry.classList.add('tag-list-entry');
+				
+				let tagLink = document.createElement('a');
+				tagLink.innerText = thisPage;
+				tagLink.href = "#" + thisPage;
+				tagLink.classList.add('exist');
+				tagEntry.appendChild(tagLink);
+				
+				tagUL.appendChild(tagEntry);
+			}
+		}
+		
+		pageContent.appendChild(tagUL);
+		
+		return;
+	}
+	
 	if (location.hash.substr(1) != pageName)
 		location.hash = pageName;
 	
 	if ((!pageVars[pageName])&&(pageName.substr(0,5) != 'edit/'))
 		pageName = 'edit/' + pageName;
+	
+	console.log(pageName);
 	
 	if (pageName.substr(0,5) == 'edit/')
 	{
@@ -209,15 +255,21 @@ function LoadPage(pageName)
 	}
 	
 	let pageMkDn = FindOrPopulatePage(pageName).content;
+	currentTags = FindOrPopulatePage(pageName).tags;
+	console.log(pageName);
+	console.log(FindOrPopulatePage(pageName));
+	console.log(currentTags);
 	
 	//	set the content of 'wiki-page-view' to pageHTML
 	pageContent.innerHTML = "<h1>" + pageName + "</h1>";
+	pageContent.appendChild(TagsParse(currentTags));
 	pageContent.appendChild(WikiParse(pageMkDn));
 //	console.log(pageHTML);
 	
 	//	set the content of 'wiki-page-edit' textarea to pageMkDn
 	pageEditName.innerHTML = "Editing " + pageName;
 	pageEditor.value = pageMkDn;
+	tagsEditor.value = currentTags.join(",");
 	console.log(pageMkDn);
 	
 	//	TODO: Update the edit link
@@ -255,6 +307,31 @@ function transcluder(match, p1, offset, string) {
 	}
 		
   return '&lt;Missing content: [[' + p1 + ']]&gt;';
+}
+
+function TagsParse(tagArray)
+{
+	let tagDiv = document.createElement('div');
+	tagDiv.classList.add('tag-list-view');
+	
+	if (tagArray.length == 0)
+		return tagDiv;
+	
+	for (const thisTag of tagArray)
+	{
+		//	Add it to the list
+		let tagEntry = document.createElement('span');
+		tagEntry.classList.add('tag-list-entry');
+		
+		let tagLink = document.createElement('a');
+		tagLink.innerText = thisTag;
+		tagLink.href = "#tag:" + thisTag;
+		tagEntry.appendChild(tagLink);
+		
+		tagDiv.appendChild(tagEntry);
+	}
+	
+	return tagDiv;
 }
 
 function WikiParse(rawMarkDown)
