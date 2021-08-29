@@ -239,6 +239,8 @@ function LoadPage(pageName)
 		if(!tagList[tagName])
 			tagList[tagName] = [];
 		
+		tagList[tagName].sort();
+		
 		for (const thisPage of tagList[tagName])
 		{
 				//	Add it to the list
