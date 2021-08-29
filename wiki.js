@@ -524,18 +524,6 @@ function FindOrPopulatePage(pageName)
 	return pageVars[pageName];
 }
 
-function SaveConfig()
-{
-	chrome.storage.local.set({config: value}, function() {
-	  console.log('Value is set to ' + value);
-	});
-}
-
-function SaveAll()
-{
-	SaveConfig();
-}
-
 window.addEventListener('hashchange', function() {
 	LoadPage(location.hash.substr(1));
 }, false);
