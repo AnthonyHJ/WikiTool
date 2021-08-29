@@ -169,16 +169,13 @@ function LoadPage(pageName)
 		pageName = currentPage;
 		
 		currentTags = tagsEditor.value.split(',');
-		console.log(currentTags);
 		
 		//	process those tags
 		let cleanedTags = [];
 		
 		for (let thisTag in currentTags)
 		{
-			console.log(thisTag);
 			thisTag = currentTags[thisTag].trim();
-			console.log(thisTag);
 			
 			cleanedTags.push(thisTag);
 			
@@ -190,7 +187,6 @@ function LoadPage(pageName)
 		}
 		
 		currentTags = cleanedTags;
-		console.log(currentTags);
 		
 		if (!pageVars[pageName])
 			pageVars[pageName] = Object.create(defaultPageVars);
@@ -204,12 +200,11 @@ function LoadPage(pageName)
 		//	save the page
 		pageVars[pageName].content = pageEditor.value;
 		pageVars[pageName].tags = currentTags;
-		console.log(currentTags);
 		pageVars[pageName]['modified'] = Date.now();
 		
 		//	add to the localStorage
 		chrome.storage.local.set({'pageValues': pageVars}, function() {
-			console.log('pageValues is set to wiki page values');
+			console.log('Saving: page values');
 		});
 		chrome.storage.local.set({'tagList': tagList}, function() {
 			console.log('Saving: tag values');
