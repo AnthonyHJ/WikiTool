@@ -212,7 +212,7 @@ function LoadPage(pageName)
 			console.log('pageValues is set to wiki page values');
 		});
 		chrome.storage.local.set({'tagList': tagList}, function() {
-			console.log('tagList is set to wiki tag values');
+			console.log('Saving: tag values');
 		});
 		console.log(tagList);
 		
@@ -390,7 +390,7 @@ function WikiParse(rawMarkDown)
 		myLine = myLine.replaceAll(/\[\[([^\]|]+?)\]\]/g, linkMakerOne);
 		
 		//	wiki link 1 (target and text do NOT match)
-		myLine = myLine.replaceAll(/\[\[([^\]|]+?)\|([\w \']+?)\]\]/g, linkMakerTwo);
+		myLine = myLine.replaceAll(/\[\[([^\]|]+?)\|([^\]]+?)\]\]/g, linkMakerTwo);
 		
 		//	external link?
 		
