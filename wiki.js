@@ -13,18 +13,6 @@ var editLink = document.querySelector("#edit-link");
 var searchBar = document.querySelector("#search-bar");
 var searchSuggestions = document.querySelector("#search-suggestions");
 
-//	fixed values
-var defaultConfig = {
-	'startupPage' : 'StartupPage'
-};
-var defaultPageVars = {
-		'content' : '',
-		'created' : '',
-		'modified' : '',
-		'tags' : [],
-		'title' : ''
-		};
-
 //	Set at runtime
 var config = {};
 var pageVars = {
@@ -46,33 +34,25 @@ function Initialise()
 {
 	//	This is going to be a whole nested thing or a list of promises
 	
-	//	Load configuration values
-	chrome.storage.local.get(['config'], function(result) {
-		if (!result.config)
-			config = defaultConfig;
-		else
-			config = result.config;
+	chrome.runtime.sendMessage({action: "startUp"}, function(response) {
+		console.log(response);
 		
+		config = response.config;
+		tagList = response.tagList;
+		homeLink.href = '#' + config['startupPage'];
+	
 		//	Load pages
 		chrome.storage.local.get(['pageValues'], function(pageResult) {
 			if (pageResult.pageValues)
 				pageVars = pageResult.pageValues;
-				
-			//	Load tags
-			chrome.storage.local.get(['tagList'], function(tagResult) {
-				if (tagResult.tagList)
-					tagList = tagResult.tagList;
-				
-				//	Load startup page
-				if (location.hash)
-					LoadPage(location.hash.substr(1));
-				else
-					LoadPage(config['startupPage']);
-				});
-			});
-		
-		homeLink.href = '#' + config['startupPage'];
+			
+			//	Load startup page
+			if (location.hash)
+				LoadPage(location.hash.substr(1));
+			else
+				LoadPage(config['startupPage']);
 		});
+	});
 		
 	//	Search bar functionality
 	searchBar.addEventListener('input', function(e) {
@@ -189,7 +169,13 @@ function LoadPage(pageName)
 		currentTags = cleanedTags;
 		
 		if (!pageVars[pageName])
-			pageVars[pageName] = Object.create(defaultPageVars);
+			pageVars[pageName] = {
+				'content' : '',
+				'created' : '',
+				'modified' : '',
+				'tags' : [],
+				'title' : ''
+			};
 		
 		if (!pageVars[pageName]['created'])
 			pageVars[pageName]['created'] = Date.now()
@@ -519,7 +505,13 @@ function FindOrPopulatePage(pageName)
 	currentPage = pageName;
 	
 	if (!pageVars[pageName])
-		return Object.create(defaultPageVars);
+		return {
+			'content' : '',
+			'created' : '',
+			'modified' : '',
+			'tags' : [],
+			'title' : ''
+		};
 	
 	return pageVars[pageName];
 }
