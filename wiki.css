@@ -22,8 +22,8 @@ a	{ text-decoration: none; color: #333; }
 a:hover		{ text-decoration: underline; }
 a:visited	{ color: #333; }
 
-a.new			{ color: #f00; }
-a.new:visited	{ color: #f00; }
+a.new			{ color: #c33; }
+a.new:visited	{ color: #c33; }
 
 a.exist			{ color: #13f; }
 a.exist:visited	{ color: #13f; }
