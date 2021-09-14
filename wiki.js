@@ -21,15 +21,9 @@ var searchSuggestions = document.querySelector("#search-suggestions");
 
 //	Set at runtime
 var config = {};
-var pageVars = {
-	'StartupPage' : {
-		'content' : 'Test\n\nContent',
-		'created' : 1,
-		'modified' : 1,
-		'tags' : ['default', 'startup', 'system'],
-		'title' : ''}
-};
 var tagList = {};
+var pageList;
+var pageVars = {};
 
 var currentPage;
 var currentTags = [];
@@ -45,19 +39,14 @@ function Initialise()
 		
 		config = response.config;
 		tagList = response.tagList;
+		pageList = response.pageList;
 		homeLink.href = '#' + config['startupPage'];
-	
-		//	Load pages
-		chrome.storage.local.get(['pageValues'], function(pageResult) {
-			if (pageResult.pageValues)
-				pageVars = pageResult.pageValues;
-			
+		
 			//	Load startup page
 			if (location.hash)
 				LoadPage(location.hash.substr(1));
 			else
-				LoadPage(config['startupPage']);
-		});
+				location.hash = "#" + config['startupPage'];
 	});
 		
 	//	Search bar functionality
@@ -84,7 +73,7 @@ function Initialise()
 		myLink.classList.add('search-bar');
 //		searchSuggestions.appendChild(myLink);
 				
-		//	Toss in a HR
+		//	TODO: Toss in a HR
 		
 		if (searchBar.value.length == 0)
 			searchSuggestions.style.visibility = 'hidden';
@@ -117,20 +106,6 @@ function LoadPage(pageName)
 	searchBar.value = '';
 	searchSuggestions.style.visibility = 'hidden';
 	
-	if (pageName == 'edit')
-	{
-		pageName = currentPage;
-		
-		//	Open the 'edit' pane
-		pageContent.style.display = 'none';
-		pageEditPage.style.display = 'block';
-		
-		//	Correct the URI
-//		location.hash = pageName;
-		
-		return;
-	}
-	
 	if (pageName == 'preview')
 	{
 		pageName = currentPage;
@@ -153,6 +128,12 @@ function LoadPage(pageName)
 	if (pageName == 'save')
 	{
 		pageName = currentPage;
+		//	TODO: tags change...
+		//	currentTags was the old list of tags
+		//	id = tagList[lostTag].indexOf(pageName)
+		//	tagList[lostTag].splice(id, 1)
+		//		where 'lostTag' is the removed tag
+		//	iterate through the old tags to find lost tags?
 		
 		currentTags = tagsEditor.value.split(',');
 		
@@ -194,14 +175,10 @@ function LoadPage(pageName)
 		pageVars[pageName].tags = currentTags;
 		pageVars[pageName]['modified'] = Date.now();
 		
-		//	add to the localStorage
-		chrome.storage.local.set({'pageValues': pageVars}, function() {
-			console.log('Saving: page values');
+		//	send these things to the background page
+		chrome.runtime.sendMessage({updatePage: pageVars[pageName]}, function(response) {
+			
 		});
-		chrome.storage.local.set({'tagList': tagList}, function() {
-			console.log('Saving: tag values');
-		});
-		console.log(tagList);
 		
 		//	Open the 'view' pane
 		location.hash = pageName;
@@ -251,7 +228,7 @@ function LoadPage(pageName)
 	if (location.hash.substr(1) != pageName)
 		location.hash = pageName;
 	
-	if ((!pageVars[pageName])&&(pageName.substr(0,5) != 'edit/'))
+	if ((!pageList.includes(pageName))&&(pageName.substr(0,5) != 'edit/'))
 		pageName = 'edit/' + pageName;
 	
 	if (pageName.substr(0,5) == 'edit/')
@@ -273,18 +250,7 @@ function LoadPage(pageName)
 		pageEditPage.style.display = 'none';
 	}
 	
-	let pageMkDn = FindOrPopulatePage(pageName).content;
-	currentTags = FindOrPopulatePage(pageName).tags;
-	
-	//	set the content of 'wiki-page-view' to pageHTML
-	pageContent.innerHTML = "<h1>" + pageName + "</h1>";
-	pageContent.appendChild(TagsParse(currentTags));
-	pageContent.appendChild(WikiParse(pageMkDn));
-	
-	//	set the content of 'wiki-page-edit' textarea to pageMkDn
-	pageEditName.innerHTML = "Editing " + pageName;
-	pageEditor.value = pageMkDn;
-	tagsEditor.value = currentTags.join(",");
+	FindOrPopulatePage(pageName);
 	
 	//	Update the edit link
 	editLink.href = '#edit/' + pageName;
@@ -293,7 +259,7 @@ function LoadPage(pageName)
 function linkMakerOne(match, p1, offset, string) {
 	var myClass = 'new';
 
-	if (pageVars[p1])
+	if (pageList.includes(p1))
 		myClass = 'exist';
 		
   return '<a href=\"#' + p1 + '\" class=\"' + myClass + '\">' + p1 + '</a>';
@@ -302,7 +268,7 @@ function linkMakerOne(match, p1, offset, string) {
 function linkMakerTwo(match, p1, p2, offset, string) {
 	var myClass = 'new';
 
-	if (pageVars[p2])
+	if (pageList.includes(p2))
 		myClass = 'exist';
 		
   return '<a href=\"#' + p2 + '\" class=\"' + myClass + '\">' + p1 + '</a>';
@@ -311,9 +277,24 @@ function linkMakerTwo(match, p1, p2, offset, string) {
 function transcluder(match, p1, offset, string) {
 	var myClass = 'new';
 
-	if (pageVars[p1])
+	if (pageList.includes(p1))
 	{
-		let fragment = WikiParse(pageVars[p1].content);
+		console.log("Transcluded page: " + p1);
+		
+		let fragment;
+		
+		if (pageVars[p1])
+			fragment = WikiParse(pageVars[p1].content);
+		else 
+		{
+			if (!pageVars[currentPage].transclusions)
+				pageVars[currentPage].transclusions = [];
+			
+			pageVars[currentPage].transclusions.push(p1)
+			 
+			return '&lt;Failed to load content: [[' + p1 + ']]&gt;';
+		}
+		
 		let container = document.createElement('div');
 		
 		container.appendChild(fragment);
@@ -508,18 +489,37 @@ function WikiParse(rawMarkDown)
 
 function FindOrPopulatePage(pageName)
 {
+	pageVars = {};
+	
 	currentPage = pageName;
 	
-	if (!pageVars[pageName])
-		return {
-			'content' : '',
-			'created' : '',
-			'modified' : '',
-			'tags' : [],
-			'title' : ''
-		};
-	
-	return pageVars[pageName];
+	chrome.runtime.sendMessage({pageRequest: pageName}, function(response) {
+		if (response.error)
+			console.log ("FindOrPopulatePage error: " + response.error);
+		
+		console.log(response);
+		
+		//	{pageVars: pageVars[pageRequest], pageList: Object.keys(pageVars), tagList: tagList}
+		
+		pageVars = response.pageVars;
+		
+		let pageMkDn = pageVars[pageName].content;
+		currentTags = pageVars[pageName].tags;
+		
+		//	set the content of 'wiki-page-view' to pageHTML
+		pageContent.innerHTML = "<h1>" + pageName + "</h1>";
+		pageContent.appendChild(TagsParse(currentTags));
+		pageContent.appendChild(WikiParse(pageMkDn));
+		
+		//	set the content of 'wiki-page-edit' textarea to pageMkDn
+		pageEditName.innerHTML = "Editing " + pageName;
+		pageEditor.value = pageMkDn;
+		tagsEditor.value = currentTags.join(",");
+		
+		config = response.config;
+		tagList = response.tagList;
+		pageList = response.pageList;
+	});
 }
 
 window.addEventListener('hashchange', function() {

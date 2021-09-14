@@ -46,9 +46,68 @@ chrome.browserAction.onClicked.addListener(function() {
     });
 })
 
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if (request.action === "startUp")
-      sendResponse({config: config, pageList: Object.keys(pageVars), tagList: tagList});
-  }
-);
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	if (request.action === "startUp")
+		sendResponse({config: config, pageList: Object.keys(pageVars), tagList: tagList});
+	
+	if (request.pageRequest)
+		sendResponse(loadPage(request.pageRequest));
+	
+	if (request.updatePage)
+		sendResponse(savePage(request.updatePage));
+});
+
+function savePage (updatePage)
+{
+	if (pageVars[updatePage.title])
+	{
+		//	It's an update
+		console.log(pageVars[updatePage.title]);
+	}
+	
+	pageVars[updatePage.title] = updatePage;
+	
+	//	add to the localStorage
+	chrome.storage.local.set({'pageValues': pageVars}, function() {
+		console.log('Saving: page values');
+	});
+	
+	chrome.storage.local.set({'tagList': tagList}, function() {
+		console.log('Saving: tag values');
+	});
+}
+
+function loadPage (pageName)
+{
+	if (!pageVars[pageName])
+		return {
+			pageVars: {
+				pageName : {
+					'content' : '',
+					'created' : '',
+					'modified' : '',
+					'tags' : [],
+					'title' : '',
+					'transclusions' : []
+				}
+			},
+			pageList: Object.keys(pageVars), 
+			tagList: tagList,
+			error: "no page"
+		};
+	
+	let pageVarsPages = {};
+	pageVarsPages[pageName] = pageVars[pageName];
+	
+	//	TODO: Any transcluded page should be linked and included
+	if (pageVars[pageName].transclusions)
+	{
+		console.log(pageVars[pageName].transclusions);
+		pageVars[pageName].transclusions.forEach(transcludedPage => {
+			pageVarsPages[transcludedPage] = pageVars[transcludedPage];
+		});
+		console.log(pageVarsPages);
+	}
+	
+	return {pageVars: pageVarsPages, pageList: Object.keys(pageVars), tagList: tagList};
+}
