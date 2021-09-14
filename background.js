@@ -1,5 +1,7 @@
 /*
+ *	Wikitool
  *	A tool for saving a wiki to Local Storage
+ *	https://github.com/AnthonyHJ/WikiTool
  */
 
 'use strict';
