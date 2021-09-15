@@ -167,13 +167,11 @@ function LoadPage(pageName)
 		if (!pageVars[pageName]['created'])
 			pageVars[pageName]['created'] = Date.now()
 		
-		if (!pageVars[pageName]['title'])
-			pageVars[pageName]['title'] = pageName;
-		
 		//	save the page
 		pageVars[pageName].content = pageEditor.value;
 		pageVars[pageName].tags = currentTags;
 		pageVars[pageName]['modified'] = Date.now();
+		pageVars[pageName]['title'] = pageName;
 		
 		//	send these things to the background page
 		chrome.runtime.sendMessage({updatePage: pageVars[pageName]}, function(response) {
