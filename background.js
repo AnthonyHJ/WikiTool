@@ -82,12 +82,12 @@ function loadPage (pageName)
 	if (!pageVars[pageName])
 		return {
 			pageVars: {
-				pageName : {
+				[pageName] : {
 					'content' : '',
 					'created' : '',
 					'modified' : '',
 					'tags' : [],
-					'title' : '',
+					'title' : pageName,
 					'transclusions' : []
 				}
 			},
