@@ -17,7 +17,7 @@ var wikiOptions = document.querySelector("#wiki-page-opts");
 var homeLink = document.querySelector("#home-link");
 var editLink = document.querySelector("#edit-link");
 var searchBar = document.querySelector("#search-bar");
-var searchSuggestions = document.querySelector("#search-suggestions");
+var pageListOptions = document.querySelector("#page-list");
 
 //	Set at runtime
 var config = {};
@@ -40,6 +40,7 @@ function Initialise()
 		config = response.config;
 		tagList = response.tagList;
 		pageList = response.pageList;
+		populateSearch(pageList)
 		homeLink.href = '#' + config['startupPage'];
 		
 			//	Load startup page
@@ -50,52 +51,9 @@ function Initialise()
 	});
 		
 	//	Search bar functionality
-	searchBar.addEventListener('input', function(e) {
-		searchSuggestions.innerHTML = "";
-
-		
-		//	create and add a UL styled without dots
-		let myUL = document.createElement('ul');
-		searchSuggestions.appendChild(myUL);
-		myUL.classList.add('search-bar');
-		
-		//	create and add a LI
-		let myLI = document.createElement('li');
-		myUL.appendChild(myLI);
-		myLI.classList.add('search-bar');
-
-			
-		//	create and add an A linked to that
-		let myLink = document.createElement('a');
-		myLink.href = "#" + searchBar.value;
-		myLink.innerText = searchBar.value;
-		myLI.appendChild(myLink);
-		myLink.classList.add('search-bar');
-//		searchSuggestions.appendChild(myLink);
-				
-		//	TODO: Toss in a HR
-		
-		if (searchBar.value.length == 0)
-			searchSuggestions.style.visibility = 'hidden';
-		else
-			searchSuggestions.style.visibility = 'visible';
-		
-		//	suggestions1 (starting with string)
-		
-		//	suggestions2 (including string somewhere other than the start)
-		
-		//	HR (if suggestions1 > 0)
-		//	suggestions1
-		
-		//	HR (if suggestions2 > 0)
-		//	suggestions2
-	}, false);
-	
-	window.addEventListener('click', function(e) {
-		if((e.target.classList.contains('search-bar'))&&(searchBar.value.length > 0))
-			searchSuggestions.style.visibility = 'visible';
-		else
-			searchSuggestions.style.visibility = 'hidden';
+	searchBar.addEventListener('change', function(e) {
+		console.log(searchBar.value);
+		location.hash = "#" + searchBar.value;
 	}, false);
 }
 
@@ -104,7 +62,6 @@ function LoadPage(pageName)
 	pageName = decodeURIComponent(pageName);
 	
 	searchBar.value = '';
-	searchSuggestions.style.visibility = 'hidden';
 	
 	if (pageName == 'preview')
 	{
@@ -225,6 +182,8 @@ function LoadPage(pageName)
 	
 	if (location.hash.substr(1) != pageName)
 		location.hash = pageName;
+	
+	pageName = pageName[0].toUpperCase() + pageName.slice(1).toLowerCase();
 	
 	if ((!pageList.includes(pageName))&&(pageName.substr(0,5) != 'edit/'))
 		pageName = 'edit/' + pageName;
@@ -517,6 +476,19 @@ function FindOrPopulatePage(pageName)
 		config = response.config;
 		tagList = response.tagList;
 		pageList = response.pageList;
+		populateSearch(pageList);
+	});
+}
+
+function populateSearch(pageArray)
+{
+	pageArray.sort();	
+	pageListOptions.innerHTML = "";
+	
+	pageArray.forEach((pageOption) => {
+		let pageOptionTag = document.createElement('option');
+		pageOptionTag.value = pageOption;
+		pageListOptions.appendChild(pageOptionTag);
 	});
 }
 
